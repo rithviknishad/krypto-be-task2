@@ -23,7 +23,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(created_by=self.request.user)
 
-    def get_wallet(self, currency) -> Wallet:
+    def get_wallet(self, currency=None) -> Wallet:
         currency = currency or self.request.data.get("currency")
         try:
             wallet: Wallet = Wallet.objects.get(user=self.request.user, currency=currency)

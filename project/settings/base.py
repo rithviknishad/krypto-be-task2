@@ -7,6 +7,8 @@ DEBUG = ENV_BOOL("DEBUG", False)
 SECRET_KEY = ENV_STR("SECRET_KEY", "secret" if DEBUG else "")
 ALLOWED_HOSTS = ENV_LIST("ALLOWED_HOSTS", ",", ["*"] if DEBUG else [])
 
+SECURITY_TOKEN = ENV_STR("SECURITY_TOKEN")
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
