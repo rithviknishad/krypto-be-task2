@@ -29,6 +29,7 @@ class Order(BaseModel, models.Model):
         blank=False,
         choices=STATE_CHOICES,
         default=STATE_PENDING,
+        editable=False,
     )
     value = models.DecimalField(
         max_digits=64,
@@ -39,6 +40,8 @@ class Order(BaseModel, models.Model):
 
 
 class Wallet(BaseModel, models.Model):
+    # TODO: unique_together: user, currency
+
     balance = models.DecimalField(
         max_digits=64,
         decimal_places=32,
@@ -57,3 +60,13 @@ class Wallet(BaseModel, models.Model):
         null=False,
         on_delete=models.CASCADE,
     )
+
+    def debit(self, amount: Decimal, save=True):
+        if self.balance < amount:
+            raise Exception("Not enough money")
+        self.balance -= amount
+        save and self.save()
+
+    def credit(self, amount: Decimal, save=True):
+        self.balance += amount
+        save and self.save()

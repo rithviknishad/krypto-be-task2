@@ -23,6 +23,26 @@ class OrderViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(created_by=self.request.user)
 
+    def get_wallet(self, currency) -> Wallet:
+        currency = currency or self.request.data.get("currency")
+        try:
+            wallet: Wallet = Wallet.objects.get(user=self.request.user, currency=currency)
+        except Wallet.DoesNotExist:
+            raise Exception(f"No wallet for currency '{currency}'")
+        return wallet
+
+    def create(self, request, *args, **kwargs):
+        self.get_wallet().debit(Decimal(request.data.get("value")))
+        return super().create(request, *args, **kwargs)
+
+    @action(detail=True, url_path="cancel", methods=["get"])
+    def cancel(self, request, *args, **kwargs):
+        instance: Order = self.get_object()
+        self.get_wallet(currency=instance.currency).credit(instance.value)
+        instance.state = Order.STATE_CANCEL
+        instance.save(update_fields=["state"])
+        return HttpResponseRedirect("../")
+
 
 class WalletViewSet(viewsets.ModelViewSet):
     queryset = Wallet.objects.all()
@@ -43,19 +63,12 @@ class WalletViewSet(viewsets.ModelViewSet):
     def credit(self, request, *args, **kwargs):
         # TODO: history of credit and debit transactions with timestamp
         amount = Decimal(self.request.query_params.get("amount"))
-        instance = self.get_object()
-        instance.balance += amount
-        instance.save()
+        self.get_object().credit(amount)
         return HttpResponseRedirect("../")
 
     @action(detail=True, url_path="debit", methods=["get"])
     def debit(self, request, *args, **kwargs):
         # TODO: history of credit and debit transactions with timestamp
         amount = Decimal(self.request.query_params.get("amount"))
-        instance = self.get_object()
-        if instance.balance < amount:
-            # TODO: better error handling?
-            raise Exception("Not enough money")
-        instance.balance -= amount
-        instance.save()
+        self.get_object().debit(amount)
         return HttpResponseRedirect("../")
