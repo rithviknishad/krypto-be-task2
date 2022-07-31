@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 
 
@@ -11,6 +13,12 @@ class Order(models.Model):
         (STATE_SUCCESS, "Success"),
     ]
 
+    created_by = models.ForeignKey(
+        "users.User",
+        related_name="orders",
+        null=False,
+        on_delete=models.CASCADE,
+    )
     created_on = models.DateTimeField(
         blank=False,
         null=False,
@@ -40,6 +48,7 @@ class Wallet(models.Model):
         decimal_places=32,
         blank=False,
         null=False,
+        default=Decimal("0"),
     )
     currency = models.CharField(
         max_length=255,
