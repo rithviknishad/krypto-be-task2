@@ -18,8 +18,8 @@ schema_view = get_schema_view(
 )
 
 router = routers.DefaultRouter()
-router.register(r"core/orders", OrderViewSet)
-router.register(r"core/wallets", WalletViewSet)
+router.register(r"orders", OrderViewSet)
+router.register(r"wallets", WalletViewSet)
 
 urlpatterns = [
     path("admin/doc/", include("django.contrib.admindocs.urls")),
