@@ -1,9 +1,10 @@
 from decimal import Decimal
 
 from django.db import models
+from utils.models import BaseModel
 
 
-class Order(models.Model):
+class Order(BaseModel, models.Model):
     STATE_CANCEL = "cancel"
     STATE_PENDING = "pending"
     STATE_SUCCESS = "success"
@@ -18,11 +19,6 @@ class Order(models.Model):
         related_name="orders",
         null=False,
         on_delete=models.CASCADE,
-    )
-    created_on = models.DateTimeField(
-        blank=False,
-        null=False,
-        auto_now_add=True,
     )
     currency = models.CharField(
         max_length=255,
@@ -42,7 +38,7 @@ class Order(models.Model):
     )
 
 
-class Wallet(models.Model):
+class Wallet(BaseModel, models.Model):
     balance = models.DecimalField(
         max_digits=64,
         decimal_places=32,
