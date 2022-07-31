@@ -12,9 +12,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             "state",
             "currency",
             "created_on",
-            "created_by",
         )
-        read_only_fields = ("created_by",)
 
 
 class WalletSerializer(serializers.HyperlinkedModelSerializer):
@@ -22,7 +20,6 @@ class WalletSerializer(serializers.HyperlinkedModelSerializer):
         model = Wallet
         fields = (
             "url",
-            "user",
             "currency",
             "balance",
         )
