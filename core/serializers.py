@@ -26,4 +26,7 @@ class WalletSerializer(serializers.HyperlinkedModelSerializer):
             "currency",
             "balance",
         )
-        read_only_fields = ("user",)
+        read_only_fields = (
+            "user",
+            "balance",
+        )

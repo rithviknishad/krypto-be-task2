@@ -45,6 +45,7 @@ class Wallet(BaseModel, models.Model):
         blank=False,
         null=False,
         default=Decimal("0"),
+        editable=False,
     )
     currency = models.CharField(
         max_length=255,
