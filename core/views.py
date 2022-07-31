@@ -38,9 +38,10 @@ class OrderViewSet(viewsets.ModelViewSet):
     @action(detail=True, url_path="cancel", methods=["get"])
     def cancel(self, request, *args, **kwargs):
         instance: Order = self.get_object()
-        self.get_wallet(currency=instance.currency).credit(instance.value)
-        instance.state = Order.STATE_CANCEL
-        instance.save(update_fields=["state"])
+        if instance.state != Order.STATE_CANCEL:
+            self.get_wallet(currency=instance.currency).credit(instance.value)
+            instance.state = Order.STATE_CANCEL
+            instance.save(update_fields=["state"])
         return HttpResponseRedirect("../")
 
 
