@@ -8,11 +8,15 @@ from django.conf import settings
 
 
 def stats_view(request: HttpRequest):
+    if not request.user.is_superuser:
+        raise Exception("Must be superuser")
     if request.method == "GET":
         query = Order.objects.values("currency").annotate(count=Count("currency"))
         stats = dict((x["currency"], x["count"]) for x in query)
         if "security" not in request.headers:
             raise Exception("No security token")
+            # TODO: send json response instead
+            return JsonResponse({"error": "No security token present in headers."})
         # TODO: take token from settings which takes from env.
         if request.headers["security"] != settings.SECURITY_TOKEN:
             raise Exception("Invalid security token")
