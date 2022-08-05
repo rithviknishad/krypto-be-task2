@@ -1,5 +1,5 @@
 from decimal import Decimal
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
@@ -72,4 +72,10 @@ class WalletViewSet(viewsets.ModelViewSet):
         # TODO: history of credit and debit transactions with timestamp
         amount = Decimal(self.request.query_params.get("amount"))
         self.get_object().debit(amount)
-        return HttpResponseRedirect("../")
+
+        return JsonResponse(
+            {
+                "message": "OK",
+                "object": WalletSerializer(self.get_object(), context={"request": request}).data,
+            }
+        )

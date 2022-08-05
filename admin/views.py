@@ -17,7 +17,6 @@ def stats_view(request: HttpRequest):
             raise Exception("No security token")
             # TODO: send json response instead
             return JsonResponse({"error": "No security token present in headers."})
-        # TODO: take token from settings which takes from env.
         if request.headers["security"] != settings.SECURITY_TOKEN:
             raise Exception("Invalid security token")
         return JsonResponse(stats, safe=False)
